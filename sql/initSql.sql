@@ -111,3 +111,43 @@ INSERT INTO `menu` (`id`, `menu_name`, `menu_level`, `menu_url`, `parent_menu_id
 INSERT INTO `menu` (`id`, `menu_name`, `menu_level`, `menu_url`, `parent_menu_id`, `priority`, `create_id`, `create_date`, `update_id`, `update_date`, `del_flag`, `code`) VALUES ('39', '权限列表-菜单权限', '3', '', '9', '407', '1', '2020-09-12 23:39:59', NULL, NULL, '0', 'role:list:update:menu');
 INSERT INTO `menu` (`id`, `menu_name`, `menu_level`, `menu_url`, `parent_menu_id`, `priority`, `create_id`, `create_date`, `update_id`, `update_date`, `del_flag`, `code`) VALUES ('40', '权限列表-动态配置权限', '3', '', '9', '408', '1', '2020-09-12 23:43:09', '1', '2020-09-12 23:43:42', '0', 'role:list:update:role');
 
+
+
+DROP TABLE IF EXISTS `fund`;
+CREATE TABLE `fund` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `fund_code` varchar(8) NOT NULL COMMENT '基金code',
+  `fund_name` varchar(32) NOT NULL COMMENT '基金名称',
+  `fund_source_rate` varchar(8) DEFAULT NULL COMMENT '原费率',
+  `fund_Rate` varchar(8) DEFAULT NULL COMMENT '现费率',
+  `fund_minsg` varchar(8) DEFAULT NULL COMMENT '最小申购金额',
+    `create_id` bigint(11) DEFAULT NULL COMMENT '创建者id',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金表';
+
+
+DROP TABLE IF EXISTS `fund_valuation`;
+CREATE TABLE `fund_valuation` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `fund_id` bigint(11) NOT NULL COMMENT '基金Id',
+  `fund_date` varchar(16) NOT NULL COMMENT '日期',
+  `dwjz` varchar(16) DEFAULT NULL COMMENT '单位净值',
+  `equity_return` varchar(16) DEFAULT NULL COMMENT '估值',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金估值表';
+
+
+DROP TABLE IF EXISTS `fund_stock`;
+CREATE TABLE `fund_stock` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `fund_id` bigint(11) NOT NULL COMMENT '基金Id',
+  `stock_code` varchar(8) NOT NULL COMMENT '股票code',
+  `stock_name` varchar(8) DEFAULT NULL COMMENT '股票名称',
+  `create_id` bigint(11) DEFAULT NULL COMMENT '创建者id',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金-持仓股票';
+
+
+
