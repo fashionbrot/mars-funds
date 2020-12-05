@@ -1,6 +1,7 @@
 package com.github.fashionbrot.funds.controller;
 
 
+import com.github.fashionbrot.funds.annotation.IsMenu;
 import com.github.fashionbrot.funds.entity.FundEntity;
 import com.github.fashionbrot.funds.req.FundReq;
 import com.github.fashionbrot.funds.service.FundService;
@@ -47,11 +48,17 @@ public class FundController {
         return RespVo.success();
     }
 
+    @IsMenu
+    @GetMapping("/index")
+    public String index(){
+        return "/fund/index";
+    }
+
     @ApiOperation("数据列表—分页")
     @GetMapping("/page")
     @ResponseBody
-    public PageVo page(FundReq req){
-        return  fundService.pageList(req);
+    public RespVo page(FundReq req){
+        return  RespVo.success(fundService.pageList(req));
     }
 
 

@@ -9,7 +9,7 @@ import lombok.Data;
 public class PageReq {
 
     @ApiModelProperty(value = "当前页码")
-    private Integer pageNo;
+    private Integer page;
 
     @ApiModelProperty(value = "每页条数")
     private Integer pageSize;

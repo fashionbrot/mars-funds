@@ -53,7 +53,7 @@ public class FundValuationServiceImpl implements FundValuationService {
     * @return
     */
     public PageVo pageList(FundValuationReq req){
-        Page<?> page= PageHelper.startPage(req.getPageNo(),req.getPageSize());
+        Page<?> page= PageHelper.startPage(req.getPage(),req.getPageSize());
         List<FundValuationEntity> list = fundValuationDao.list(null);
 
         return PageVo.builder()

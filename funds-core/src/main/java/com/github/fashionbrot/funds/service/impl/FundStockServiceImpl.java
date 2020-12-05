@@ -53,7 +53,7 @@ public class FundStockServiceImpl implements FundStockService {
     * @return
     */
     public PageVo pageList(FundStockReq req){
-        Page<?> page= PageHelper.startPage(req.getPageNo(),req.getPageSize());
+        Page<?> page= PageHelper.startPage(req.getPage(),req.getPageSize());
         List<FundStockEntity> list = fundStockDao.list(null);
 
         return PageVo.builder()

@@ -1,6 +1,7 @@
 package com.github.fashionbrot.funds.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.fashionbrot.funds.dao.FundDao;
 import com.github.fashionbrot.funds.entity.FundEntity;
@@ -8,6 +9,7 @@ import com.github.fashionbrot.funds.enums.RespCode;
 import com.github.fashionbrot.funds.exception.CurdException;
 import com.github.fashionbrot.funds.req.FundReq;
 import com.github.fashionbrot.funds.service.FundService;
+import com.github.fashionbrot.funds.util.StringUtil;
 import com.github.fashionbrot.funds.vo.PageVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -53,8 +55,12 @@ public class FundServiceImpl implements FundService {
     * @return
     */
     public PageVo pageList(FundReq req){
-        Page<?> page= PageHelper.startPage(req.getPageNo(),req.getPageSize());
-        List<FundEntity> list = fundDao.list(null);
+        Page<?> page= PageHelper.startPage(req.getPage(),req.getPageSize());
+        QueryWrapper q=new QueryWrapper();
+        if (StringUtil.isNotEmpty(req.getFundCode())){
+            q.eq("fund_code",req.getFundCode());
+        }
+        List<FundEntity> list = fundDao.list(q);
 
         return PageVo.builder()
                 .data(list)

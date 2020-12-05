@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 public class FundReq extends PageReq {
 
+    private String fundCode;
 
 }
