@@ -1,5 +1,8 @@
 $(function (){
     loadData();
+    setInterval(function() {
+        updateGuzhi();
+    }, 300000);
 })
 var dataTable;
 function loadData() {
@@ -63,6 +66,20 @@ function loadData() {
         language : dataTableConfig.DATA_TABLES.DEFAULT_OPTION.LANGUAGE,
         columns : [
             {
+                className: "td-checkbox",
+                bSortable : false,
+                className : "text-center",
+                data : "id",
+                width : '15px',
+                render : function(data, type, row, meta) {
+                    var content = '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">';
+                    content += '	<input type="checkbox" name="stuCheckbox" class="group-checkable" value="' + row.fundCode + '" />';
+                    content += '	<span></span>';
+                    content += '</label>';
+                    return content;
+                }
+            },
+            {
                 data : 'fundCode',
                 bSortable : true,
                 // width : "30px",
@@ -82,7 +99,8 @@ function loadData() {
                 // width : '200px',
                 render : function(data, type, full) {
 
-                    return "";
+                    return "<span class=\"sparkline\" sparkType=\"bar\" sparkBarColor=\"#4FC0E8\" sparkWidth=\"300\" sparkHeight=\"60\" sparkBarWidth=\"20\">5,4,3,2,4,5,6,7,8,6,4,5</span>";
+                    //return "<span class=\"sparkline\" sparkFillColor=\"#FFF\" sparkLineWidth=\"2\" sparkLineColor=\"#9FD468\" sparkWidth=\"100\" sparkHeight=\"45\" >5,4,3,2,4,5,6,7,8,6,4,5</span>";
 
                     /*return '<a class="btn btn-success btn-" onclick="queryByUserId(\'' + full.id + '\')"><i class="fa fa-edit">修改</i> </a>'
                         + '&nbsp;&nbsp;<a class="btn btn-warning btn-circle" onclick="showModal(\'' + full.id + '\')"> <i class="fa fa-times">删除</i></a>';*/
@@ -97,6 +115,7 @@ function loadData() {
                 $(e.target).parents('table').find('tr').removeClass('warning');
                 $(e.target).parents('tr').addClass('warning');
             });
+            uiSparkline();
         }
 
         //dom:"<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>"
@@ -129,6 +148,15 @@ function loadData() {
     });
 
 }
+
+var uiSparkline = function(){
+
+    if($(".sparkline").length > 0)
+        $(".sparkline").sparkline('html', { enableTagOptions: true,disableHiddenCheck: true, height: '300', width: '60px'});
+
+}
+
+
 function addFund() {
     loading();
     var startDate = "2020-06-01";
@@ -149,6 +177,68 @@ function addFund() {
         }
     });
 }
+
+function updateGuzhi() {
+    loading();
+    $.ajax({
+        url: "/fund/updateGuzhi",
+        type: "post",
+        data: {},
+        dataType: "json",
+        success: function (data) {
+            loaded();
+            if (data.code == "0") {
+                loadData();
+            } else {
+                alert(data.msg);
+            }
+        },error: function (){
+            alert("请求失败");
+        }
+    });
+}
+
+
+function fundhold() {
+
+    var listIds = $("input[name='stuCheckbox']:checked");
+    var ids="";
+    if (listIds){
+        for(var i=0;i<listIds.length;i++){
+            if (ids==""){
+                ids =$(listIds[i]).val();
+            }else{
+                ids += ","+$(listIds[i]).val();
+            }
+        }
+    }
+    var userName = $("#userName").val();
+    console.log(ids);
+    if (ids==""){
+        alert("请选择要缴费的学员");
+        return false;
+    }
+
+    loading();
+    $.ajax({
+        url: "/fund/fundhold",
+        type: "post",
+        data: {"fundCodes":ids,"userName":userName},
+        dataType: "json",
+        success: function (data) {
+            loaded();
+            if (data.code == "0") {
+                loadData();
+            } else {
+                alert(data.msg);
+            }
+        },error: function (){
+            alert("请求失败");
+        }
+    });
+}
+
+
 
 function addModal(){
     $('#addModal').modal('show');

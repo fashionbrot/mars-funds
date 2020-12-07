@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" id="theme" th:href="@{/css/theme-default.css}"/>
     <!-- EOF CSS INCLUDE -->
     <head th:replace="/common/head :: head"></head>
-
+<style>
+    canvas{width: 300px;}
+</style>
 </head>
 <body>
 <!-- START PAGE CONTAINER -->
@@ -75,12 +77,39 @@
                                     <i class="glyphicon glyphicon-plus"></i>新增
                                 </button>
                             </div>
+
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success "
+                                        onclick="updateGuzhi()">
+                                    <span class="glyphicon glyphicon-search"></span>更新当天估值
+                                </button>
+                            </div>
+
+
+
+                            <div class="btn-group">
+                                <input id="userName" type="text" style="width: 100px;display: inline"
+                                       class="form-control" placeholder="username" />
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success dropdown-toggle"
+                                        onclick="fundhold()">
+                                    <i class="glyphicon glyphicon-plus"></i>添加持有基金
+                                </button>
+                            </div>
+
                         </div>
                         <div class="panel-body">
                             <div class="table-responsive" >
                                 <table id="dataTableId" class="table table-bordered" cellspacing="0" width="100%" >
                                     <thead>
                                         <tr>
+                                            <th >
+                                                <div class="td-checkbox">
+                                                    <input type="checkbox" name="topCheckboxName" class="group-checkable" />
+                                                </div>
+                                            </th>
                                             <th width="10%">基金code</th>
                                             <th width="10%">基金名称</th>
                                             <th width="10%">估值</th>
@@ -191,8 +220,19 @@
 
 
     <div th:replace="/common/footer :: footer"/>
-<script type="text/javascript" th:src="@{/js/plugins/datatables/extjs.js}"></script>
+<script type="text/javascript" th:src="@{js/plugins/nvd3/lib/d3.v3.js}"></script>
+<script type="text/javascript" th:src="@{js/plugins/nvd3/nv.d3.min.js}"></script>
+
+<script type="text/javascript" th:src="@{js/plugins/sparkline/jquery.sparkline.min.js}"></script>
+<script type="text/javascript" th:src="@{js/plugins/knob/jquery.knob.min.js}"></script>
+
+<!--<script type="text/javascript" th:src="@{/js/plugins/datatables/extjs.js}"></script>-->
 <script type="text/javascript" th:src="@{/js/admin/fund.js}"></script>
+
+<script type="text/javascript">
+
+</script>
+
 </body>
 </html>
 

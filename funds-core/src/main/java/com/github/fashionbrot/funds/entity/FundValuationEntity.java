@@ -25,19 +25,19 @@ public class FundValuationEntity {
 	@TableId(type = IdType.AUTO)
 	private Long id;
 
-	@ApiModelProperty(value = "基金Id")
-	@TableField("fund_id")
-	private Long fundId;
+	@ApiModelProperty(value = "基金code")
+	@TableField("fund_code")
+	private String fundCode;
 
 	@ApiModelProperty(value = "日期")
 	@TableField("fund_date")
-	private String fundDate;
+	private Date fundDate;
 
 	@ApiModelProperty(value = "单位净值")
 	@TableField("dwjz")
-	private String dwjz;
+	private Double dwjz;
 
 	@ApiModelProperty(value = "估值")
 	@TableField("equity_return")
-	private String equityReturn;
+	private Double equityReturn;
 }

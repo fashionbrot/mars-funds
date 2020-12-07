@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.github.fashionbrot.funds.mapper.FundHoldMapper">
+
+
+    <resultMap type="com.github.fashionbrot.funds.entity.FundHoldEntity" id="fundHoldMap">
+            <result property="id" column="id"/>
+<!--            <result property="stockCode" column="stock_code"/>
+            <result property="stockName" column="stock_name"/>-->
+            <result property="userName" column="user_name"/>
+    </resultMap>
+
+    <resultMap type="com.github.fashionbrot.funds.dto.FundHoldDTO" id="fundHoldDtoMap">
+            <result property="id" column="id"/>
+            <!--<result property="stockCode" column="stock_code"/>
+            <result property="stockName" column="stock_name"/>-->
+            <result property="userName" column="user_name"/>
+    </resultMap>
+    <sql id="allSql">
+        id,fund_code,fund_name,user_name
+    </sql>
+
+    
+
+</mapper>

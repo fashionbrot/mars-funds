@@ -2,15 +2,19 @@ package com.github.fashionbrot.funds.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.fashionbrot.funds.dao.FundDao;
+import com.github.fashionbrot.funds.dao.FundHoldDao;
 import com.github.fashionbrot.funds.dao.FundStockDao;
 import com.github.fashionbrot.funds.dao.FundValuationDao;
 import com.github.fashionbrot.funds.entity.FundEntity;
+import com.github.fashionbrot.funds.entity.FundHoldEntity;
 import com.github.fashionbrot.funds.entity.FundStockEntity;
 import com.github.fashionbrot.funds.entity.FundValuationEntity;
 import com.github.fashionbrot.funds.util.*;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import net.bytebuddy.asm.Advice;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +25,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -52,16 +57,17 @@ public class FundsService {
 
     }
 
-    private static void parseFundGSZData(String code) {
+    private static FundValuationEntity parseFundGSZData(String code) {
 
 
-        String url = "http://fundgz.1234567.com.cn/js/"+code+".js?rt=1589463125600&jzrq=2020-12-02";
+        String url = "http://fundgz.1234567.com.cn/js/"+code+".js?rt="+System.currentTimeMillis();
         HttpResult httpResult = HttpClientUtil.httpGet(url, null, null,"ISO-8859-1",2000,2000);
         if (httpResult.isSuccess()){
             String content = httpResult.getContent();
             String str = new String(content.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-            handleGSJZData(str);
+            return handleGSJZData(str);
         }
+        return null;
     }
 
     @Autowired
@@ -74,15 +80,28 @@ public class FundsService {
     private FundValuationDao fundValuationDao;
 
     //处理估算净值
-    private static void handleGSJZData(String data) {
+    private static FundValuationEntity handleGSJZData(String data) {
 
         int start = data.indexOf("(");
         int end = data.indexOf(")");
         if (start < end && start > 0) {
             String jsonData = data.substring(start + 1, end);
             JSONObject jsonObject = JSONObject.parseObject(jsonData);
+            if (jsonObject!=null){
+                try {
+                    return FundValuationEntity.builder()
+                            .fundCode(jsonObject.getString("fundcode"))
+                            .equityReturn(ObjectUtil.formatDouble(jsonObject.getString("gszzl")))
+                            .fundDate(DateUtils.parseDate(jsonObject.getString("gztime").substring(0,9),DateUtil.DATE_FORMAT_DAY))
+                            .dwjz(ObjectUtil.formatDouble(jsonObject.getString("jzrq")))
+                            .build();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
 
-            String stringBuilder = "代号：" +
+
+            /*String stringBuilder = "代号：" +
                     jsonObject.getString("fundcode") +
                     "\n" +
                     "名称：" +
@@ -103,8 +122,9 @@ public class FundsService {
                     "估值时间：" +
                     jsonObject.getString("gztime") +
                     "\n";
-            System.out.println(stringBuilder);
+            System.out.println(stringBuilder);*/
         }
+        return null;
     }
     DateTimeFormatter dd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -143,7 +163,7 @@ public class FundsService {
             List<FundStockEntity> list =new ArrayList<>();
             for (Map.Entry<String, Object> map : stockCodes.entrySet()) {
                 list.add(FundStockEntity.builder()
-                        .fundId(fundEntity.getId())
+                        .fundCode(code)
                         .stockCode(map.getValue().toString())
                         .build());
             }
@@ -174,12 +194,16 @@ public class FundsService {
                     start =true;
                 }
                 if (start){
-                    vList.add(FundValuationEntity.builder()
-                            .fundId(fundEntity.getId())
-                            .equityReturn(equityReturn)
-                            .fundDate(dataStr)
-                            .dwjz(value)
-                            .build());
+                    try {
+                        vList.add(FundValuationEntity.builder()
+                                .fundCode(code)
+                                .equityReturn(ObjectUtil.formatDouble(equityReturn))
+                                .fundDate(DateUtils.parseDate(dataStr.substring(0,9),DateUtil.DATE_FORMAT_DAY))
+                                .dwjz(ObjectUtil.formatDouble(value))
+                                .build());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             fundValuationDao.saveBatch(vList);
@@ -193,10 +217,52 @@ public class FundsService {
 
     public static void main(String[] args) {
         //p();
-        //parseFundGSZData("519674");
+        parseFundGSZData("110022");
         //tiantian("519674");
         /*String dateStr = DateUtil.formatDate(DateTimeFormatter.ofPattern("yyyy-MM-dd"),new Date(1607011200000L));
         System.out.println(dateStr);*/
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void updateGuzhi() {
+        List<FundEntity> fundEntityList = fundDao.list(null);
+        if (CollectionUtil.isNotEmpty(fundEntityList)){
+            for (FundEntity fundEntity : fundEntityList) {
+                FundValuationEntity fundValuationEntity = parseFundGSZData(fundEntity.getFundCode());
+                if (fundValuationEntity!=null){
+                    QueryWrapper<FundValuationEntity> q = new QueryWrapper();
+                    q.eq("fund_code",fundEntity.getFundCode());
+                    q.eq("fund_date",fundValuationEntity.getFundDate());
+                    if(fundValuationDao.count(q)>0){
+                        fundValuationDao.update(fundValuationEntity,q);
+                    }else{
+                        fundValuationDao.save(fundValuationEntity);
+                    }
+                }
+            }
+        }
+    }
+
+    @Autowired
+    private FundHoldDao fundHoldDao;
+
+    public void fundhold(FundHoldEntity entity) {
+        if (StringUtil.isEmpty(entity.getFundCodes())){
+            return;
+        }
+        String[] codes= entity.getFundCodes().split(",");
+        QueryWrapper q=new QueryWrapper();
+        q.in("fund_code",Arrays.asList(codes));
+        List<FundEntity> fundEntityList = fundDao.list(q);
+
+        List<FundHoldEntity> list = new ArrayList<>();
+        fundEntityList.forEach(fund->{
+            list.add(FundHoldEntity.builder()
+                    .fundCode(fund.getFundCode())
+                    .fundName(fund.getFundName())
+                    .userName(entity.getUserName())
+                    .build());
+        });
+        fundHoldDao.saveBatch(list);
+    }
 }

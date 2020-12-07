@@ -3,6 +3,7 @@ package com.github.fashionbrot.funds.controller;
 
 import com.github.fashionbrot.funds.annotation.IsMenu;
 import com.github.fashionbrot.funds.entity.FundEntity;
+import com.github.fashionbrot.funds.entity.FundHoldEntity;
 import com.github.fashionbrot.funds.req.FundReq;
 import com.github.fashionbrot.funds.service.FundService;
 import com.github.fashionbrot.funds.service.FundsService;
@@ -47,6 +48,23 @@ public class FundController {
         fundsService.tiantian(code,startDate);
         return RespVo.success();
     }
+
+    @ApiOperation("更新当天估值")
+    @RequestMapping("/updateGuzhi")
+    @ResponseBody
+    public RespVo updateGuzhi(){
+        fundsService.updateGuzhi();
+        return RespVo.success();
+    }
+
+    @ApiOperation("用户持有基金绑定")
+    @PostMapping("/fundhold")
+    @ResponseBody
+    public RespVo fundhold(FundHoldEntity entity){
+        fundsService.fundhold(entity);
+        return RespVo.success();
+    }
+
 
     @IsMenu
     @GetMapping("/index")

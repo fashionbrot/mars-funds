@@ -121,7 +121,7 @@ CREATE TABLE `fund` (
   `fund_source_rate` varchar(8) DEFAULT NULL COMMENT '原费率',
   `fund_Rate` varchar(8) DEFAULT NULL COMMENT '现费率',
   `fund_minsg` varchar(8) DEFAULT NULL COMMENT '最小申购金额',
-    `create_id` bigint(11) DEFAULT NULL COMMENT '创建者id',
+   `create_id` bigint(11) DEFAULT NULL COMMENT '创建者id',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金表';
@@ -130,8 +130,8 @@ CREATE TABLE `fund` (
 DROP TABLE IF EXISTS `fund_valuation`;
 CREATE TABLE `fund_valuation` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `fund_id` bigint(11) NOT NULL COMMENT '基金Id',
-  `fund_date` varchar(16) NOT NULL COMMENT '日期',
+  `fund_code` varchar(11) NOT NULL COMMENT '基金code',
+  `fund_date` datetime DEFAULT NULL COMMENT '日期',
   `dwjz` varchar(16) DEFAULT NULL COMMENT '单位净值',
   `equity_return` varchar(16) DEFAULT NULL COMMENT '估值',
   PRIMARY KEY (`id`)
@@ -141,7 +141,7 @@ CREATE TABLE `fund_valuation` (
 DROP TABLE IF EXISTS `fund_stock`;
 CREATE TABLE `fund_stock` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `fund_id` bigint(11) NOT NULL COMMENT '基金Id',
+  `fund_code` varchar(8) NOT NULL COMMENT '基金code',
   `stock_code` varchar(8) NOT NULL COMMENT '股票code',
   `stock_name` varchar(8) DEFAULT NULL COMMENT '股票名称',
   `create_id` bigint(11) DEFAULT NULL COMMENT '创建者id',
@@ -149,5 +149,19 @@ CREATE TABLE `fund_stock` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金-持仓股票';
 
+
+DROP TABLE IF EXISTS `fund_hold`;
+CREATE TABLE `fund_hold` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `stock_code` varchar(8) NOT NULL COMMENT '股票code',
+  `stock_name` varchar(8) DEFAULT NULL COMMENT '股票名称',
+  `user_name` varchar(8) DEFAULT NULL COMMENT '用户',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户持仓基金';
+
+
+INSERT INTO `menu` (`id`, `menu_name`, `menu_level`, `menu_url`, `parent_menu_id`, `priority`, `code`, `create_id`, `create_date`, `update_id`, `update_date`, `del_flag`) VALUES ('41', '基金管理', '1', '', '0', '10000', '', '1', '2020-12-07 16:06:46', NULL, NULL, '0');
+INSERT INTO `menu` (`id`, `menu_name`, `menu_level`, `menu_url`, `parent_menu_id`, `priority`, `code`, `create_id`, `create_date`, `update_id`, `update_date`, `del_flag`) VALUES ('42', '基金列表', '2', '/fund/index', '41', '10001', '', '1', '2020-12-07 16:07:02', NULL, NULL, '0');
 
 
