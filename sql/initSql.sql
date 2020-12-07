@@ -165,3 +165,15 @@ INSERT INTO `menu` (`id`, `menu_name`, `menu_level`, `menu_url`, `parent_menu_id
 INSERT INTO `menu` (`id`, `menu_name`, `menu_level`, `menu_url`, `parent_menu_id`, `priority`, `code`, `create_id`, `create_date`, `update_id`, `update_date`, `del_flag`) VALUES ('42', '基金列表', '2', '/fund/index', '41', '10001', '', '1', '2020-12-07 16:07:02', NULL, NULL, '0');
 
 
+
+
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('1', '110022', '易方达消费行业股票', 'sun', '2020-12-07 22:59:19');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('2', '110022', '易方达消费行业股票', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('3', '110023', '易方达医疗保健行业混合', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('4', '110025', '易方达资源行业混合', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('5', '008888', '华夏国证半导体芯片ETF联接C', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('7', '000031', '华夏复兴混合', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('8', '501057', '汇添富中证新能源汽车A', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('9', '004854', '广发中证全指汽车指数A', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('10', '004856', '广发中证全指建筑材料指数A', 'sun', '2020-12-08 00:16:24');
+INSERT INTO `fund_hold` (`id`, `fund_code`, `fund_name`, `user_name`, `create_date`) VALUES ('11', '002084', '新华鑫动力灵活配置混合C', 'sun', '2020-12-08 00:16:24');
