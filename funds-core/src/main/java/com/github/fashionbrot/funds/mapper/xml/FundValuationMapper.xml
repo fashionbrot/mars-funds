@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.github.fashionbrot.funds.mapper.FundValuationMapper">
+
+
+    <resultMap type="com.github.fashionbrot.funds.entity.FundValuationEntity" id="fundValuationMap">
+            <result property="id" column="id"/>
+            <result property="fundId" column="fund_id"/>
+            <result property="fundDate" column="fund_date"/>
+            <result property="dwjz" column="dwjz"/>
+            <result property="equityReturn" column="equity_return"/>
+    </resultMap>
+
+    <resultMap type="com.github.fashionbrot.funds.dto.FundValuationDTO" id="fundValuationDtoMap">
+            <result property="id" column="id"/>
+            <result property="fundId" column="fund_id"/>
+            <result property="fundDate" column="fund_date"/>
+            <result property="dwjz" column="dwjz"/>
+            <result property="equityReturn" column="equity_return"/>
+    </resultMap>
+    <sql id="allSql">
+        id,fund_id,fund_date,dwjz,equity_return
+    </sql>
+
+    
+
+</mapper>
