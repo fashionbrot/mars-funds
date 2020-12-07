@@ -1,11 +1,18 @@
+var dingshi;
 $(function (){
     loadData();
-    setInterval(function() {
+    dingshi = setInterval(function() {
         updateGuzhi();
-    }, 300000);
+    }, 5000);
 })
 var dataTable;
-function loadData() {
+//300000
+function loadData(flag) {
+
+    if (flag=='1'){
+        window.clearInterval(dingshi);
+    }
+
     var tableId = "#dataTableId";
     $(tableId).dataTable().fnDestroy();
     dataTable = $(tableId)
@@ -28,6 +35,10 @@ function loadData() {
             data: function(data){
                 data.page = data.start / data.length + 1;
                 data.pageSize = data.length;
+                data.limit =parseInt($("#limit").val());
+                if (flag=='1'){
+                    data.tuiyan = parseInt($("#tuiyan").val());
+                }
                 // 右上角搜索
                 data.fundCode = $("#query").val();
                 delete data.search;
@@ -82,25 +93,35 @@ function loadData() {
             {
                 data : 'fundCode',
                 bSortable : true,
-                // width : "30px",
+                width : "30px",
+                className : "text-center",
+                render : dataTableConfig.DATA_TABLES.RENDER.ELLIPSIS
+            },
+            {
+                data : 'fundName',
+                bSortable : true,
+                width : "50px",
                 className : "text-center",
                 render : dataTableConfig.DATA_TABLES.RENDER.ELLIPSIS
             },
              {
-                data : 'fundName',
+                data : 'lastGuzhi',
                 bSortable : true,
-                // width : "30px",
+                width : "50px",
                 className : "text-center",
                 render : dataTableConfig.DATA_TABLES.RENDER.ELLIPSIS
             }, {
                 data : 'operate',
                 bSortable : false,
                 visible : true,
-                // width : '200px',
+                width : '200px',
+                className: "lastClassName",
                 render : function(data, type, full) {
+                    var guzhi = full.guzhi;
 
-                    return "<span class=\"sparkline\" sparkType=\"bar\" sparkBarColor=\"#4FC0E8\" sparkWidth=\"300\" sparkHeight=\"60\" sparkBarWidth=\"20\">5,4,3,2,4,5,6,7,8,6,4,5</span>";
-                    //return "<span class=\"sparkline\" sparkFillColor=\"#FFF\" sparkLineWidth=\"2\" sparkLineColor=\"#9FD468\" sparkWidth=\"100\" sparkHeight=\"45\" >5,4,3,2,4,5,6,7,8,6,4,5</span>";
+                    //return "<span class=\"sparkline\" sparkType=\"bar\" sparkBarColor=\"#4FC0E8\" sparkWidth=\"300\" sparkHeight=\"60\" sparkBarWidth=\"20\">5.23,4.1,3.32,2.01,4.01,5.45,6.01,7,8,6,4,5</span>";
+                    return "<span class=\"sparkline\" sparkType='bar' sparkFillColor=\"#0000ff\" sparkLineWidth=\"1\"" +
+                        " sparkLineColor=\"#0000ff\" sparkWidth=\"250\" sparkHeight=\"80\" sparkBarWidth='20'  >"+guzhi+"</span>";
 
                     /*return '<a class="btn btn-success btn-" onclick="queryByUserId(\'' + full.id + '\')"><i class="fa fa-edit">修改</i> </a>'
                         + '&nbsp;&nbsp;<a class="btn btn-warning btn-circle" onclick="showModal(\'' + full.id + '\')"> <i class="fa fa-times">删除</i></a>';*/
@@ -140,6 +161,7 @@ function loadData() {
         // ajax 请求之前事件
         data.page = data.start / data.length + 1;
         data.limit = data.length;
+        data.limit =20;
         delete data.start;
         delete data.order;
         delete data.search;
@@ -151,8 +173,16 @@ function loadData() {
 
 var uiSparkline = function(){
 
-    if($(".sparkline").length > 0)
-        $(".sparkline").sparkline('html', { enableTagOptions: true,disableHiddenCheck: true, height: '300', width: '60px'});
+    if($(".sparkline").length > 0){
+       var guzhi =  $(".sparkline");
+       if (guzhi){
+           for(var i=0;i<guzhi.length;i++){
+               $(guzhi[i]).sparkline('html', { enableTagOptions: true,disableHiddenCheck: true, height: '300', width: '60px'});
+           }
+
+       }
+    }
+        //$(".sparkline").sparkline('html', { enableTagOptions: true,disableHiddenCheck: true, height: '300', width: '60px'});
 
 }
 

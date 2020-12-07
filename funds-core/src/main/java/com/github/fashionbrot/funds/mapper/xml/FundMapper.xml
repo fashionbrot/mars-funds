@@ -25,6 +25,18 @@
         id,fund_code,fund_name,fund_source_rate,fund_Rate,fund_minsg
     </sql>
 
+    <resultMap type="com.github.fashionbrot.funds.entity.FundEntity" id="fundMap2">
+        <result property="fundCode" column="fund_code"/>
+        <result property="fundName" column="fund_name"/>
+        <collection property="valuationList" ofType="com.github.fashionbrot.funds.entity.FundValuationEntity">
+            <result property="fundCode" column="fund_code"/>
+            <result property="equityReturn" column="equity_return"/>
+        </collection>
+    </resultMap>
+
+    <select id="pageList" parameterType="com.github.fashionbrot.funds.req.FundReq" resultMap="fundMap2">
+
+    </select>
     
 
 </mapper>

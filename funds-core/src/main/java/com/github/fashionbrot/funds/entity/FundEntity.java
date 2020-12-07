@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 基金表
@@ -50,4 +51,10 @@ public class FundEntity {
 	@ApiModelProperty(value = "最小申购金额")
 	@TableField("fund_minsg")
 	private String fundMinsg;
+
+	private transient List<FundValuationEntity> valuationList;
+
+	private transient String guzhi;
+
+	private transient String lastGuzhi;
 }

@@ -26,6 +26,7 @@ import javax.script.ScriptException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -64,6 +65,7 @@ public class FundsService {
         HttpResult httpResult = HttpClientUtil.httpGet(url, null, null,"ISO-8859-1",2000,2000);
         if (httpResult.isSuccess()){
             String content = httpResult.getContent();
+            System.out.println(content);
             String str = new String(content.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             return handleGSJZData(str);
         }
@@ -81,7 +83,7 @@ public class FundsService {
 
     //处理估算净值
     private static FundValuationEntity handleGSJZData(String data) {
-
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
         int start = data.indexOf("(");
         int end = data.indexOf(")");
         if (start < end && start > 0) {
@@ -92,8 +94,8 @@ public class FundsService {
                     return FundValuationEntity.builder()
                             .fundCode(jsonObject.getString("fundcode"))
                             .equityReturn(ObjectUtil.formatDouble(jsonObject.getString("gszzl")))
-                            .fundDate(DateUtils.parseDate(jsonObject.getString("gztime").substring(0,9),DateUtil.DATE_FORMAT_DAY))
-                            .dwjz(ObjectUtil.formatDouble(jsonObject.getString("jzrq")))
+                            .fundDate(sf.parse(jsonObject.getString("gztime").substring(0,10)))
+                            .dwjz(ObjectUtil.formatDouble(jsonObject.getString("gsz")))
                             .build();
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -168,7 +170,7 @@ public class FundsService {
                         .build());
             }
             fundStockDao.saveBatch(list);
-
+            SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
             boolean start=false;
             Object json = engine.get("Data_netWorthTrend");
             List<FundValuationEntity> vList=new ArrayList<>();
@@ -195,12 +197,12 @@ public class FundsService {
                 }
                 if (start){
                     try {
-                        vList.add(FundValuationEntity.builder()
-                                .fundCode(code)
-                                .equityReturn(ObjectUtil.formatDouble(equityReturn))
-                                .fundDate(DateUtils.parseDate(dataStr.substring(0,9),DateUtil.DATE_FORMAT_DAY))
-                                .dwjz(ObjectUtil.formatDouble(value))
-                                .build());
+                        FundValuationEntity aa=new FundValuationEntity();
+                        aa.setFundCode(code);
+                        aa.setEquityReturn(ObjectUtil.formatDouble(equityReturn));
+                        aa.setFundDate(sf.parse(dataStr));
+                         aa.setDwjz(ObjectUtil.formatDouble(value));
+                        vList.add(aa);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }

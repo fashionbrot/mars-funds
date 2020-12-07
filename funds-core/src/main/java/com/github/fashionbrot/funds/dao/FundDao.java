@@ -3,6 +3,9 @@ package com.github.fashionbrot.funds.dao;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.fashionbrot.funds.entity.FundEntity;
+import com.github.fashionbrot.funds.req.FundReq;
+
+import java.util.List;
 
 
 /**
@@ -16,5 +19,5 @@ import com.github.fashionbrot.funds.entity.FundEntity;
 public interface FundDao extends IService<FundEntity> {
 
 
-
+    List<FundEntity> pageList(FundReq req);
 }

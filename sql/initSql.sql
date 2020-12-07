@@ -153,8 +153,8 @@ CREATE TABLE `fund_stock` (
 DROP TABLE IF EXISTS `fund_hold`;
 CREATE TABLE `fund_hold` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `stock_code` varchar(8) NOT NULL COMMENT '股票code',
-  `stock_name` varchar(8) DEFAULT NULL COMMENT '股票名称',
+  `fund_code` varchar(8) NOT NULL COMMENT '基金code',
+  `fund_name` varchar(8) DEFAULT NULL COMMENT '基金名称',
   `user_name` varchar(8) DEFAULT NULL COMMENT '用户',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)

@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.fashionbrot.funds.dao.FundDao;
+import com.github.fashionbrot.funds.dao.FundValuationDao;
 import com.github.fashionbrot.funds.entity.FundEntity;
+import com.github.fashionbrot.funds.entity.FundValuationEntity;
 import com.github.fashionbrot.funds.enums.RespCode;
 import com.github.fashionbrot.funds.exception.CurdException;
 import com.github.fashionbrot.funds.req.FundReq;
@@ -13,14 +15,14 @@ import com.github.fashionbrot.funds.util.StringUtil;
 import com.github.fashionbrot.funds.vo.PageVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 基金表
@@ -34,6 +36,9 @@ public class FundServiceImpl implements FundService {
 
     @Autowired
     private FundDao fundDao;
+
+    @Autowired
+    private FundValuationDao fundValuationDao;
 
     @Override
     public Collection<FundEntity> queryList(Map<String, Object> params) {
@@ -60,14 +65,79 @@ public class FundServiceImpl implements FundService {
         if (StringUtil.isNotEmpty(req.getFundCode())){
             q.eq("fund_code",req.getFundCode());
         }
+
         List<FundEntity> list = fundDao.list(q);
+        List<FundEntity> tuiyanList =null;
+        if (CollectionUtils.isNotEmpty(list)){
+            tuiyanList = new ArrayList<>(list.size());
+            for (FundEntity fundEntity : list) {
+                QueryWrapper qq=new QueryWrapper();
+                qq.select("equity_return");
+                qq.eq("fund_code",fundEntity.getFundCode());
+                qq.orderByDesc("fund_date");
+                if (req.getLimit()!=null) {
+                    qq.last("limit "+req.getLimit()+"");
+                }
+                List<FundValuationEntity> list2 = fundValuationDao.list(qq);
+                if (CollectionUtils.isNotEmpty(list2)){
+                    List<Double> list3 = list2.stream().map(m-> m.getEquityReturn()).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(list3)) {
+                        fundEntity.setLastGuzhi(list3.get(0).toString());
+
+                        if (req.getTuiyan()!=null){
+                            double today = list3.get(0);
+                            if (!tuiyan(list3,today,req.getTuiyan())){
+                                tuiyanList.add(fundEntity);
+                            }
+                        }
+                        Collections.reverse(list3);
+                        String guzhi = Strings.join(list3, ',');
+                        fundEntity.setGuzhi( guzhi);
+                    }
+                }
+            }
+        }
+
+        long total = page.getTotal();
+        if (CollectionUtils.isNotEmpty(tuiyanList)){
+            list = tuiyanList;
+            total = Long.valueOf(list.size()+"");
+        }
+
 
         return PageVo.builder()
                 .data(list)
-                .iTotalDisplayRecords(page.getTotal())
+                .iTotalDisplayRecords(total)
                 .build();
     }
 
+    /**
+     * 当天估值，循环判断上一天是否比当天低
+     * @param list
+     * @param today
+     * @param tuiyan
+     * @return
+     */
+    public boolean tuiyan(List<Double> list , double today,Integer tuiyan){
+        if (CollectionUtils.isNotEmpty(list)){
+            if (list.size()<tuiyan){
+                return true;
+            }
+            for (int i = 0; i <list.size() ; i++) {
+                Double d = list.get(i+1);
+                if (today<0){
+                    if (d<0 && today<d){
+                        return false;
+                    }
+                }
+                if (tuiyan==(i-1)){
+                    return true;
+                }
+            }
+        }
+
+        return true;
+    }
 
     @Override
     public void insert(FundEntity entity) {
