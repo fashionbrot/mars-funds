@@ -1,16 +1,16 @@
 var dingshi;
 $(function (){
     loadData();
-    dingshi = setInterval(function() {
+    /*dingshi = setInterval(function() {
         updateGuzhi();
-    }, 300000);
+    }, 300000);*/
 })
 var dataTable;
 //300000
 function loadData(flag) {
 
     if (flag=='1'){
-        window.clearInterval(dingshi);
+        //window.clearInterval(dingshi);
     }
 
     var tableId = "#dataTableId";
@@ -34,8 +34,8 @@ function loadData(flag) {
             // 传入已封装的参数
             data: function(data){
                 data.page = data.start / data.length + 1;
-                data.pageSize = data.length;
-                data.limit =parseInt($("#limit").val());
+                data.pageSize =100; //data.length;
+                data.vlimit =parseInt($("#limit").val());
                 if (flag=='1'){
                     data.tuiyan = parseInt($("#tuiyan").val());
                 }
@@ -70,7 +70,7 @@ function loadData(flag) {
         // 默认排序查询,为空则表示取消默认排序否则复选框一列会出现小箭头
         order: [1,2,3],
         // 分页,默认打开
-        paging : true,
+        paging : false,
         // 是否禁用原生搜索
         searching: false,
         orderable: true,
@@ -105,7 +105,7 @@ function loadData(flag) {
                 render : dataTableConfig.DATA_TABLES.RENDER.ELLIPSIS
             },
              {
-                data : 'lastGuzhi',
+                data : 'equityReturn',
                 bSortable : true,
                 width : "50px",
                 className : "text-center",
@@ -160,10 +160,10 @@ function loadData(flag) {
     }).on('preXhr.dt', function(e, settings, data) {
         // ajax 请求之前事件
         data.page = data.start / data.length + 1;
-        data.limit = data.length;
-        data.limit =20;
+        data.limit = 100//data.length;
+        data.vlimit =20;
         delete data.start;
-        delete data.order;
+        //delete data.order;
         delete data.search;
         delete data.length;
         delete data.columns;
@@ -228,6 +228,52 @@ function updateGuzhi() {
         }
     });
 }
+function removeGuzhi() {
+    loading();
+    $.ajax({
+        url: "/fund/removeGuzhi",
+        type: "post",
+        data: {},
+        dataType: "json",
+        success: function (data) {
+            loaded();
+            if (data.code == "0") {
+                loadData();
+            } else {
+                alert(data.msg);
+            }
+        },error: function (){
+            alert("请求失败");
+        }
+    });
+}
+initDateDay("startDate");
+function loadValuation() {
+    var startDate = $("#startDate").val();
+    if (startDate==null || startDate==''){
+        alert("请输入估值开始日期");
+        return false;
+    }
+    loading();
+    $.ajax({
+        url: "/fund/loadValuation",
+        type: "post",
+        data: {"startDate":startDate},
+        dataType: "json",
+        success: function (data) {
+            loaded();
+            if (data.code == "0") {
+                loadData();
+            } else {
+                alert(data.msg);
+            }
+        },error: function (){
+            alert("请求失败");
+        }
+    });
+}
+
+
 
 
 function fundhold() {

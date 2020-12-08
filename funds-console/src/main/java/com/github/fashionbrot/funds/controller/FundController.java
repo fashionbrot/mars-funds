@@ -45,7 +45,7 @@ public class FundController {
     @RequestMapping("/build")
     @ResponseBody
     public RespVo build(String code,String startDate){
-        fundsService.tiantian(code,startDate);
+        fundsService.tiantian(code,startDate,false);
         return RespVo.success();
     }
 
@@ -62,6 +62,23 @@ public class FundController {
     @ResponseBody
     public RespVo fundhold(FundHoldEntity entity){
         fundsService.fundhold(entity);
+        return RespVo.success();
+    }
+
+    @ApiOperation("删除估值数据，备份到 fundhold")
+    @PostMapping("/removeGuzhi")
+    @ResponseBody
+    public RespVo removeGuzhi(){
+        fundsService.removeGuzhi();
+        return RespVo.success();
+    }
+
+
+    @ApiOperation("重新获取估值")
+    @PostMapping("/loadValuation")
+    @ResponseBody
+    public RespVo loadValuation(String startDate){
+        fundsService.loadValuation(startDate);
         return RespVo.success();
     }
 

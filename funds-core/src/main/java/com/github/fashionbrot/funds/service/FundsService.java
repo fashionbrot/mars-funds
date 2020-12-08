@@ -11,6 +11,7 @@ import com.github.fashionbrot.funds.entity.FundEntity;
 import com.github.fashionbrot.funds.entity.FundHoldEntity;
 import com.github.fashionbrot.funds.entity.FundStockEntity;
 import com.github.fashionbrot.funds.entity.FundValuationEntity;
+import com.github.fashionbrot.funds.exception.MarsException;
 import com.github.fashionbrot.funds.util.*;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import net.bytebuddy.asm.Advice;
@@ -88,7 +89,12 @@ public class FundsService {
         int end = data.indexOf(")");
         if (start < end && start > 0) {
             String jsonData = data.substring(start + 1, end);
-            JSONObject jsonObject = JSONObject.parseObject(jsonData);
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = JSONObject.parseObject(jsonData);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             if (jsonObject!=null){
                 try {
                     return FundValuationEntity.builder()
@@ -131,8 +137,20 @@ public class FundsService {
     DateTimeFormatter dd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Transactional(rollbackFor = Exception.class)
-    public  void tiantian(String code,String startDate){
-        String url="http://fund.eastmoney.com/pingzhongdata/"+code+".js?v=20201204225315";
+    public  void tiantian(String code,String startDate,boolean flag){
+
+        QueryWrapper qqq = new QueryWrapper();
+        qqq.eq("fund_code",code);
+        int count = fundDao.count(qqq);
+        if (count>0){
+            if (!flag) {
+                throw new MarsException("已经已添加,请不要重复添加");
+            }else{
+                return;
+            }
+        }
+
+        String url="http://fund.eastmoney.com/pingzhongdata/"+code+".js?v="+System.currentTimeMillis();
         HttpResult httpResult = HttpClientUtil.httpGet(url, null, null,"ISO-8859-1",2000,2000);
         if (httpResult.isSuccess()){
             String content = httpResult.getContent();
@@ -150,6 +168,7 @@ public class FundsService {
             String fund_sourceRate= (String) engine.get("fund_sourceRate");
             String fund_Rate = (String) engine.get("fund_Rate");
             String fund_minsg = getKey(engine,"fund_minsg");
+            Object json = engine.get("Data_netWorthTrend");
 
             FundEntity fundEntity = FundEntity.builder()
                     .fundCode(code)
@@ -172,7 +191,6 @@ public class FundsService {
             fundStockDao.saveBatch(list);
             SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
             boolean start=false;
-            Object json = engine.get("Data_netWorthTrend");
             List<FundValuationEntity> vList=new ArrayList<>();
             ScriptObjectMirror objectMirror = (ScriptObjectMirror) json;
             Set<Map.Entry<String, Object>> entrySet = objectMirror.entrySet();
@@ -240,6 +258,8 @@ public class FundsService {
                     }else{
                         fundValuationDao.save(fundValuationEntity);
                     }
+                    fundEntity.setEquityReturn(fundValuationEntity.getEquityReturn());
+                    fundDao.updateById(fundEntity);
                 }
             }
         }
@@ -266,5 +286,33 @@ public class FundsService {
                     .build());
         });
         fundHoldDao.saveBatch(list);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeGuzhi() {
+        List<FundEntity> fundEntityList = fundDao.list(null);
+
+        if (CollectionUtil.isNotEmpty(fundEntityList)){
+            List<FundHoldEntity> hList = new ArrayList<>(fundEntityList.size());
+            fundEntityList.forEach(fund->{
+                hList.add(FundHoldEntity.builder()
+                        .fundCode(fund.getFundCode())
+                        .fundName(fund.getFundName())
+                        .build());
+            });
+            fundHoldDao.saveBatch(hList);
+        }
+        fundDao.remove(null);
+        fundValuationDao.remove(null);
+        fundStockDao.remove(null);
+    }
+
+    public void loadValuation(String startDate) {
+        List<FundHoldEntity> fundHoldEntities = fundHoldDao.list(null);
+        if (CollectionUtil.isNotEmpty(fundHoldEntities)){
+            fundHoldEntities.forEach(hold->{
+                tiantian(hold.getFundCode(),startDate,true);
+            });
+        }
     }
 }

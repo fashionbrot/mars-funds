@@ -11,6 +11,7 @@ import com.github.fashionbrot.funds.enums.RespCode;
 import com.github.fashionbrot.funds.exception.CurdException;
 import com.github.fashionbrot.funds.req.FundReq;
 import com.github.fashionbrot.funds.service.FundService;
+import com.github.fashionbrot.funds.util.CollectionUtil;
 import com.github.fashionbrot.funds.util.StringUtil;
 import com.github.fashionbrot.funds.vo.PageVo;
 import com.github.pagehelper.Page;
@@ -65,6 +66,26 @@ public class FundServiceImpl implements FundService {
         if (StringUtil.isNotEmpty(req.getFundCode())){
             q.eq("fund_code",req.getFundCode());
         }
+        List<Map<FundReq.Order, String>> order = req.getOrder();
+        if (CollectionUtil.isNotEmpty(order)){
+            order.forEach(map->{
+                String key = map.get(FundReq.Order.column);
+                if ("3".equals(key)){
+                    if ("desc".equals(map.get(FundReq.Order.dir))){
+                        q.orderByDesc(" equity_return");
+                    }else{
+                        q.orderByAsc(" equity_return");
+                    }
+                }
+                if ("1".equals(key)){
+                    if ("desc".equals(map.get(FundReq.Order.dir))){
+                        q.orderByDesc("fund_code");
+                    }else{
+                        q.orderByAsc(" fund_code");
+                    }
+                }
+            });
+        }
 
         List<FundEntity> list = fundDao.list(q);
         List<FundEntity> tuiyanList =null;
@@ -75,8 +96,8 @@ public class FundServiceImpl implements FundService {
                 qq.select("equity_return");
                 qq.eq("fund_code",fundEntity.getFundCode());
                 qq.orderByDesc("fund_date");
-                if (req.getLimit()!=null) {
-                    qq.last("limit "+req.getLimit()+"");
+                if (req.getVlimit()!=null) {
+                    qq.last("limit "+req.getVlimit()+"");
                 }
                 List<FundValuationEntity> list2 = fundValuationDao.list(qq);
                 if (CollectionUtils.isNotEmpty(list2)){

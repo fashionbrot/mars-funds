@@ -761,6 +761,23 @@ function initDateTime(dateId) {
         });
     });
 }
+
+function initDateDay(dateId) {
+    lay('#'+dateId).each(function(){
+        laydate.render({
+            elem: this
+            //,area:['600px','500px']
+            ,position:'fixed'
+            ,format:'yyyy-MM-dd'
+            ,type:'date'
+            ,trigger: 'click'
+            ,theme: 'grid'
+            ,zIndex: 99999999
+            ,top:30
+        });
+    });
+}
+
 function initDateOpt(dateId) {
     var format="";
     var type="";

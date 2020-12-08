@@ -48,6 +48,10 @@ public class FundEntity {
 	@TableField("fund_Rate")
 	private String fundRate;
 
+	@ApiModelProperty(value = "估值")
+	@TableField("equity_return")
+	private Double equityReturn;
+
 	@ApiModelProperty(value = "最小申购金额")
 	@TableField("fund_minsg")
 	private String fundMinsg;
