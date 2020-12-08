@@ -70,11 +70,12 @@
 
 
 
+
                             <div class="btn-group">
-                                <input id="query" type="text" style="width: 100px;display: inline"  data-toggle="tooltip"  title="根据基金code 查询基金"
-                                       class="form-control" placeholder="基金code" />
-                            </div>
-                            <div class="btn-group">
+                                <div class="btn-group">
+                                    <input id="query" type="text" style="width: 100px;display: inline"  data-toggle="tooltip" maxlength="6"  title="根据基金code 查询基金"
+                                           class="form-control" placeholder="基金code" />
+                                </div>
                                 <button type="button" class="btn btn-success "  data-toggle="tooltip"  title="根据基金code 查询基金"
                                         onclick="loadData()">
                                     <span class="glyphicon glyphicon-search"></span>查询
@@ -87,11 +88,16 @@
                                 </button>
                             </div>-->
 
+
                             <div class="btn-group">
-                                <input id="fundCode" type="text" style="width: 100px;display: inline" data-toggle="tooltip"  title="新增基金,此处填写基金号"
-                                       class="form-control" placeholder="基金code" />
-                            </div>
-                            <div class="btn-group">
+                                <div class="btn-group">
+                                    <input id="fundCode" type="text" style="width: 80px;display: inline"  maxlength="6"  data-toggle="tooltip"  title="新增基金,此处填写基金号"
+                                           class="form-control" placeholder="基金code" />
+                                </div>
+                                <div class="btn-group">
+                                    <input id="startDate1" type="text" style="width: 110px;display: inline"  data-toggle="tooltip"  title="估值加载从（当前天）开始入库[排节假日]"
+                                           class="form-control" placeholder="入库开始时间"  />
+                                </div>
                                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="tooltip"  title="新增基金"
                                         onclick="addFund()">
                                     <i class="glyphicon glyphicon-plus"></i>新增
@@ -119,11 +125,12 @@
                                 </button>
                             </div>-->
 
+
                             <div class="btn-group">
-                                <input id="tuiyan" type="text" style="width: 100px;display: inline"  data-toggle="tooltip"  title="往前推演天数"
-                                       class="form-control" placeholder="往前推演天数" value="3" />
-                            </div>
-                            <div class="btn-group">
+                                <div class="btn-group">
+                                    <input id="tuiyan" type="text" style="width: 100px;display: inline"  data-toggle="tooltip"  title="往前推演天数"
+                                           class="form-control" placeholder="往前推演天数" value="3" />
+                                </div>
                                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="tooltip"  title="推演当天估值，比之前上个低位估值低的基金"
                                         onclick="loadData('1')">
                                     <i class="glyphicon glyphicon-plus"></i>往前推

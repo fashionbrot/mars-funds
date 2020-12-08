@@ -189,8 +189,13 @@ var uiSparkline = function(){
 
 
 function addFund() {
+
+    var startDate =$("#startDate1").val();
+    if (startDate==null || startDate==''){
+        alert("请输入估值开始日期");
+        return false;
+    }
     loading();
-    var startDate = "2020-06-01";
     $.ajax({
         url: "/fund/build?code="+$("#fundCode").val()+"&startDate="+startDate,
         type: "post",
@@ -248,6 +253,7 @@ function removeGuzhi() {
     });
 }
 initDateDay("startDate");
+initDateDay("startDate1");
 function loadValuation() {
     var startDate = $("#startDate").val();
     if (startDate==null || startDate==''){

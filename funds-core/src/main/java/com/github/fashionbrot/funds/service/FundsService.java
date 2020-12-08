@@ -295,10 +295,13 @@ public class FundsService {
         if (CollectionUtil.isNotEmpty(fundEntityList)){
             List<FundHoldEntity> hList = new ArrayList<>(fundEntityList.size());
             fundEntityList.forEach(fund->{
-                hList.add(FundHoldEntity.builder()
-                        .fundCode(fund.getFundCode())
-                        .fundName(fund.getFundName())
-                        .build());
+                int count = fundHoldDao.count(new QueryWrapper<FundHoldEntity>().eq("fund_code",fund.getFundCode()));
+                if (count<=0) {
+                    hList.add(FundHoldEntity.builder()
+                            .fundCode(fund.getFundCode())
+                            .fundName(fund.getFundName())
+                            .build());
+                }
             });
             fundHoldDao.saveBatch(hList);
         }
