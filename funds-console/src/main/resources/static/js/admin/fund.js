@@ -3,7 +3,7 @@ $(function (){
     loadData();
     dingshi = setInterval(function() {
         updateGuzhi();
-    }, 5000);
+    }, 300000);
 })
 var dataTable;
 //300000
@@ -177,7 +177,8 @@ var uiSparkline = function(){
        var guzhi =  $(".sparkline");
        if (guzhi){
            for(var i=0;i<guzhi.length;i++){
-               $(guzhi[i]).sparkline('html', { enableTagOptions: true,disableHiddenCheck: true, height: '300', width: '60px'});
+               $(guzhi[i]).sparkline('html',
+                   { enableTagOptions: true,disableHiddenCheck: true, height: '300', width: '60px',barColor: '#ff0000',negBarColor: '#406cef'});
            }
 
        }
