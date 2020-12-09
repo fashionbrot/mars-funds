@@ -161,7 +161,8 @@ function loadData(flag) {
         // ajax 请求之前事件
         data.page = data.start / data.length + 1;
         data.limit = 100//data.length;
-        data.vlimit =20;
+        data.vlimit =parseInt($("#limit").val());
+        data.fundCode = $("#query").val();
         delete data.start;
         //delete data.order;
         delete data.search;

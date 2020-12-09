@@ -261,6 +261,11 @@ public class FundsService {
                     fundEntity.setEquityReturn(fundValuationEntity.getEquityReturn());
                     fundDao.updateById(fundEntity);
                 }
+                try {
+                    Thread.sleep(100L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -314,6 +319,11 @@ public class FundsService {
         List<FundHoldEntity> fundHoldEntities = fundHoldDao.list(null);
         if (CollectionUtil.isNotEmpty(fundHoldEntities)){
             fundHoldEntities.forEach(hold->{
+                try {
+                    Thread.sleep(100L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 tiantian(hold.getFundCode(),startDate,true);
             });
         }
