@@ -34,7 +34,7 @@ function loadData(flag) {
             // 传入已封装的参数
             data: function(data){
                 data.page = data.start / data.length + 1;
-                data.pageSize =100; //data.length;
+                data.pageSize =200; //data.length;
                 data.vlimit =parseInt($("#limit").val());
                 if (flag=='1'){
                     data.tuiyan = parseInt($("#tuiyan").val());
@@ -160,7 +160,7 @@ function loadData(flag) {
     }).on('preXhr.dt', function(e, settings, data) {
         // ajax 请求之前事件
         data.page = data.start / data.length + 1;
-        data.limit = 100//data.length;
+        data.limit = 200//data.length;
         data.vlimit =parseInt($("#limit").val());
         data.fundCode = $("#query").val();
         delete data.start;
